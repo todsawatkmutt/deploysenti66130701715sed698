@@ -17,6 +17,14 @@ def preprocess_text(text):
     tokens = [w for w in tokens if w not in stopwords]
     return " ".join(tokens)
 
+# Sample dataset for training (replace with your actual training data)
+train_data_thai = [
+    "วันนี้อากาศดีมาก",  # Positive example
+    "ฉันไม่ชอบฝนเลย",   # Negative example
+    # Add more data
+]
+train_labels_thai = [1, 0]  # 1 = Positive, 0 = Negative
+
 # Reload the model or create it if retraining
 try:
     # Load the model
@@ -26,12 +34,13 @@ except FileNotFoundError:
     # If no pre-trained model exists, create a new pipeline for training
     loaded_model = Pipeline([
         ('tfidf', TfidfVectorizer(tokenizer=preprocess_text, ngram_range=(1, 2))),
-        ('rf', RandomForestClassifier(n_estimators=100, random_state=42))  # เปลี่ยนเป็น Random Forest
+        ('rf', RandomForestClassifier(n_estimators=100, random_state=42))  # Random Forest
     ])
-    # Here, you would train the model with your Thai dataset
-    # Example:
-    # loaded_model.fit(train_data_thai, train_labels_thai)
-    # Then save it for future use
+    
+    # Train the model on the sample data (replace with your dataset)
+    loaded_model.fit(train_data_thai, train_labels_thai)
+
+    # Save the model for future use
     with open('sentiment_pipeline_model.pkl', 'wb') as model_file:
         pickle.dump(loaded_model, model_file)
 
