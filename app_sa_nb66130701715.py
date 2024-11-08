@@ -4,16 +4,35 @@ import pandas as pd
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
+from pythainlp import word_tokenize
 
-# Load the model
-with open('66130701715sentiment_pipeline_model.pkl', 'rb') as model_file:
-    loaded_model = pickle.load(model_file)
+# Custom tokenizer for Thai
+def thai_tokenizer(text):
+    return word_tokenize(text, engine="newmm")
+
+# Reload the model or create it if retraining
+try:
+    # Load the model
+    with open('66130701715sentiment_pipeline_model.pkl', 'rb') as model_file:
+        loaded_model = pickle.load(model_file)
+except FileNotFoundError:
+    # If no pre-trained model exists, create a new pipeline for training
+    loaded_model = Pipeline([
+        ('tfidf', TfidfVectorizer(tokenizer=thai_tokenizer)),
+        ('nb', MultinomialNB())
+    ])
+    # Here, you would train the model with your Thai dataset
+    # Example:
+    # loaded_model.fit(train_data_thai, train_labels_thai)
+    # Then save it for future use
+    with open('66130701715sentiment_pipeline_model.pkl', 'wb') as model_file:
+        pickle.dump(loaded_model, model_file)
 
 # Streamlit app
-st.title("Sentiment Analysis App")
+st.title("Sentiment Analysis App (Thai Support)")
 
 # Input text
-user_input = st.text_input("Enter a sentence:")
+user_input = st.text_input("กรอกข้อความที่ต้องการทำนาย:")
 
 if user_input:
     # Make a prediction
@@ -24,8 +43,8 @@ if user_input:
     
     # Display the result based on prediction output
     if prediction == 1:
-        st.write("Sentiment: Positive")
+        st.write("Sentiment: Positive (บวก)")
     elif prediction == 0:
-        st.write("Sentiment: Negative")
+        st.write("Sentiment: Negative (ลบ)")
     else:
-        st.write("Sentiment: Neutral or Unrecognized")
+        st.write("Sentiment: Neutral or Unrecognized (เป็นกลางหรือไม่รู้จัก)")
