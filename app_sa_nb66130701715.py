@@ -28,8 +28,11 @@ train_labels_thai = [1, 0]  # 1 = Positive, 0 = Negative
 try:
     with open('sentiment_pipeline_model.pkl', 'rb') as model_file:
         loaded_model = pickle.load(model_file)
-except FileNotFoundError:
-    # If no pre-trained model exists, create a new pipeline for training
+        # Check if the vectorizer is already fitted (to avoid errors during prediction)
+        if not hasattr(loaded_model.named_steps['tfidf'], 'vocabulary_'):
+            raise ValueError("TF-IDF vectorizer is not fitted")
+except (FileNotFoundError, ValueError) as e:
+    # If no pre-trained model exists or the vectorizer is not fitted, create a new pipeline for training
     loaded_model = Pipeline([
         ('tfidf', TfidfVectorizer(tokenizer=preprocess_text, ngram_range=(1, 2))),
         ('rf', RandomForestClassifier(n_estimators=100, random_state=42))  # Random Forest
