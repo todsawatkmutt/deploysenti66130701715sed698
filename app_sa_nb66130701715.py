@@ -4,7 +4,6 @@ import pandas as pd
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.ensemble import RandomForestClassifier   
-
 from pythainlp import word_tokenize
 import re
 
@@ -25,9 +24,8 @@ train_data_thai = [
 ]
 train_labels_thai = [1, 0]  # 1 = Positive, 0 = Negative
 
-# Reload the model or create it if retraining
+# Try loading the model
 try:
-    # Load the model
     with open('sentiment_pipeline_model.pkl', 'rb') as model_file:
         loaded_model = pickle.load(model_file)
 except FileNotFoundError:
@@ -39,7 +37,7 @@ except FileNotFoundError:
     
     # Train the model on the sample data (replace with your dataset)
     loaded_model.fit(train_data_thai, train_labels_thai)
-
+    
     # Save the model for future use
     with open('sentiment_pipeline_model.pkl', 'wb') as model_file:
         pickle.dump(loaded_model, model_file)
@@ -55,10 +53,12 @@ if user_input:
     user_input = preprocess_text(user_input)
 
     # Make a prediction
-    prediction = loaded_model.predict([user_input])[0]
-
-    # Display the result based on prediction output
-    if prediction == 1:
-        st.write("Sentiment: Positive (บวก)")
-    else:
-        st.write("Sentiment: Negative (ลบ)")
+    try:
+        prediction = loaded_model.predict([user_input])[0]
+        # Display the result based on prediction output
+        if prediction == 1:
+            st.write("Sentiment: Positive (บวก)")
+        else:
+            st.write("Sentiment: Negative (ลบ)")
+    except Exception as e:
+        st.write(f"Error during prediction: {e}")
