@@ -18,5 +18,11 @@ user_input = st.text_input("Enter a sentence:")
 if user_input:
     # Make a prediction
     prediction = loaded_model.predict([user_input])[0]
-    # Display the result
-    st.write("Sentiment:", "Positive" if prediction else "Negative")
+    
+    # Display the result based on prediction output
+    if prediction == 1:
+        st.write("Sentiment: Positive")
+    elif prediction == 0:
+        st.write("Sentiment: Negative")
+    else:
+        st.write("Sentiment: Neutral or Unrecognized")
