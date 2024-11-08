@@ -18,7 +18,9 @@ user_input = st.text_input("Enter a sentence:")
 if user_input:
     # Make a prediction
     prediction = loaded_model.predict([user_input])[0]
-st.write("Raw Prediction Output:", prediction)
+    
+    # Display the raw prediction output for debugging
+    st.write("Raw Prediction Output:", prediction)
     
     # Display the result based on prediction output
     if prediction == 1:
