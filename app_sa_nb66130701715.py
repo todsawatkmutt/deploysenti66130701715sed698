@@ -17,10 +17,10 @@ try:
         loaded_model = pickle.load(model_file)
 except FileNotFoundError:
     # If no pre-trained model exists, create a new pipeline for training
-    loaded_model = Pipeline([
-        ('tfidf', TfidfVectorizer(tokenizer=thai_tokenizer)),
-        ('nb', MultinomialNB())
-    ])
+   loaded_model = Pipeline([
+    ('tfidf', TfidfVectorizer(tokenizer=thai_tokenizer, ngram_range=(1, 2))),
+    ('rf', RandomForestClassifier(n_estimators=100, random_state=42))  # เปลี่ยนเป็น Random Forest
+  ])
     # Here, you would train the model with your Thai dataset
     # Example:
     # loaded_model.fit(train_data_thai, train_labels_thai)
